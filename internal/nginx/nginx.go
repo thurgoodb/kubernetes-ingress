@@ -23,6 +23,7 @@ type Controller struct {
 	nginxConfdPath        string
 	nginxSecretsPath      string
 	local                 bool
+	debug                 bool
 	verifyConfigGenerator *verify.ConfigGenerator
 	verifyClient          *verify.Client
 	configVersion         int
@@ -187,12 +188,13 @@ func NewUpstreamWithDefaultServer(name string) Upstream {
 				Port:        "8181",
 				MaxFails:    1,
 				FailTimeout: "10s",
-			}},
+			},
+		},
 	}
 }
 
 // NewNginxController creates a NGINX controller
-func NewNginxController(nginxConfPath string, local bool) *Controller {
+func NewNginxController(nginxConfPath string, local bool, debug bool) *Controller {
 	verifyConfigGenerator, err := verify.NewConfigGenerator()
 	if err != nil {
 		glog.Fatalf("error instantiating a verify.ConfigGenerator: %v", err)
@@ -202,6 +204,7 @@ func NewNginxController(nginxConfPath string, local bool) *Controller {
 		nginxConfdPath:        path.Join(nginxConfPath, "conf.d"),
 		nginxSecretsPath:      path.Join(nginxConfPath, "secrets"),
 		local:                 local,
+		debug:                 debug,
 		verifyConfigGenerator: verifyConfigGenerator,
 		configVersion:         0,
 		verifyClient:          verify.NewClient(),

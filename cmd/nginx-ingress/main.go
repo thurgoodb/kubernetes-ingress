@@ -91,6 +91,9 @@ The external address of the service is used when reporting the status of Ingress
 
 	nginxStatus = flag.Bool("nginx-status", true,
 		"Enable the NGINX stub_status, or the NGINX Plus API.")
+
+	nginxDebug = flag.Bool("nginx-debug", false,
+		"Enable debugging. All interactions with NGINX are done through the nginx-debug binary.")
 )
 
 func main() {
@@ -158,7 +161,7 @@ func main() {
 	if err != nil {
 		glog.Fatalf("Error creating TemplateExecutor: %v", err)
 	}
-	ngxc := nginx.NewNginxController("/etc/nginx/", local)
+	ngxc := nginx.NewNginxController("/etc/nginx/", local, *nginxDebug)
 
 	if *defaultServerSecret != "" {
 		ns, name, err := utils.ParseNamespaceName(*defaultServerSecret)
