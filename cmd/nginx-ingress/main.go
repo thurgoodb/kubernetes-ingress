@@ -93,7 +93,7 @@ The external address of the service is used when reporting the status of Ingress
 		"Enable the NGINX stub_status, or the NGINX Plus API.")
 
 	nginxDebug = flag.Bool("nginx-debug", false,
-		"Enable debugging. All interactions with NGINX are done through the nginx-debug binary.")
+		"Enable debugging for NGINX. Uses the `nginx-debug` binary. Requires 'error-log-level: debug' in the ConfigMap")
 )
 
 func main() {
