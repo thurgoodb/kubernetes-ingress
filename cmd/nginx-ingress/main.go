@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-
 	"github.com/nginxinc/kubernetes-ingress/internal/controller"
 	"github.com/nginxinc/kubernetes-ingress/internal/handlers"
 	"github.com/nginxinc/kubernetes-ingress/internal/nginx"
@@ -93,7 +92,7 @@ The external address of the service is used when reporting the status of Ingress
 		"Enable the NGINX stub_status, or the NGINX Plus API.")
 
 	nginxDebug = flag.Bool("nginx-debug", false,
-		"Enable debugging for NGINX. Uses the `nginx-debug` binary. Requires 'error-log-level: debug' in the ConfigMap")
+		"Enable debugging for NGINX. Uses the `nginx-debug` binary. Requires 'error-log-level: debug' in the ConfigMap.")
 )
 
 func main() {
@@ -157,11 +156,16 @@ func main() {
 		nginxIngressTemplatePath = *ingressTemplatePath
 	}
 
+	nginxBinary := "nginx"
+	if *nginxDebug {
+		nginxBinary = "nginx-debug"
+	}
+
 	templateExecutor, err := nginx.NewTemplateExecutor(nginxConfTemplatePath, nginxIngressTemplatePath, *healthStatus, *nginxStatus, allowedCIDRs, *nginxStatusPort)
 	if err != nil {
 		glog.Fatalf("Error creating TemplateExecutor: %v", err)
 	}
-	ngxc := nginx.NewNginxController("/etc/nginx/", local, *nginxDebug)
+	ngxc := nginx.NewNginxController("/etc/nginx/", local, nginxBinary)
 
 	if *defaultServerSecret != "" {
 		ns, name, err := utils.ParseNamespaceName(*defaultServerSecret)
