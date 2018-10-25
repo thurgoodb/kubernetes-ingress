@@ -527,7 +527,7 @@ func createTestConfigurator() (*Configurator, error) {
 	if err != nil {
 		return nil, err
 	}
-	ngxc := NewNginxController("/etc/nginx", true, "nginx")
+	ngxc := NewNginxController("/etc/nginx", "nginx", true)
 	apiCtrl, err := plus.NewNginxAPIController(&http.Client{}, "", true)
 	if err != nil {
 		return nil, err
@@ -544,7 +544,7 @@ func createTestConfiguratorInvalidIngressTemplate() (*Configurator, error) {
 	if err := templateExecutor.UpdateIngressTemplate(&invalidIngressTemplate); err != nil {
 		return nil, err
 	}
-	ngxc := NewNginxController("/etc/nginx", true, "nginx")
+	ngxc := NewNginxController("/etc/nginx", "nginx", true)
 	apiCtrl, _ := plus.NewNginxAPIController(&http.Client{}, "", true)
 	return NewConfigurator(ngxc, NewDefaultConfig(), apiCtrl, templateExecutor), nil
 }
@@ -849,5 +849,31 @@ func TestUpdateEndpointsMergeableIngressFailsWithInvalidTemplate(t *testing.T) {
 	err = cnf.UpdateEndpointsMergeableIngress(mergeableIngresses)
 	if err == nil {
 		t.Errorf("UpdateEndpointsMergeableIngress returned \n%v, but expected \n%v", nil, "template execution error")
+	}
+}
+
+func TestGetNginxCommand(t *testing.T) {
+	cnf, err := createTestConfigurator()
+	if err != nil {
+		t.Errorf("Failed to create a test configurator: %v", err)
+	}
+
+	cnf.nginx.nginxBinaryPath = "/usr/sbin/nginx"
+
+	tests := []struct {
+		cmd      string
+		expected string
+	}{
+		{"reload", "/usr/sbin/nginx -s reload"},
+		{"start", "/usr/sbin/nginx -s start"},
+		{"stop", "/usr/sbin/nginx -s stop"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.cmd, func(t *testing.T) {
+			if got := cnf.nginx.getNginxCommand(tt.cmd); got != tt.expected {
+				t.Errorf("getNginxCommand returned \n%v, but expected \n%v", got, tt.expected)
+			}
+		})
 	}
 }

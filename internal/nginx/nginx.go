@@ -194,7 +194,7 @@ func NewUpstreamWithDefaultServer(name string) Upstream {
 }
 
 // NewNginxController creates a NGINX controller
-func NewNginxController(nginxConfPath string, local bool, nginxBinary string) *Controller {
+func NewNginxController(nginxConfPath string, nginxBinaryPath string, local bool) *Controller {
 	verifyConfigGenerator, err := verify.NewConfigGenerator()
 	if err != nil {
 		glog.Fatalf("error instantiating a verify.ConfigGenerator: %v", err)
@@ -204,11 +204,7 @@ func NewNginxController(nginxConfPath string, local bool, nginxBinary string) *C
 		nginxConfdPath:        path.Join(nginxConfPath, "conf.d"),
 		nginxSecretsPath:      path.Join(nginxConfPath, "secrets"),
 		local:                 local,
-<<<<<<< HEAD
-		debug:                 debug,
-=======
-		nginxBinaryPath:       path.Join("/usr/sbin/", nginxBinary),
->>>>>>> Change nginx-debug to set name of binary
+		nginxBinaryPath:       nginxBinaryPath,
 		verifyConfigGenerator: verifyConfigGenerator,
 		configVersion:         0,
 		verifyClient:          verify.NewClient(),

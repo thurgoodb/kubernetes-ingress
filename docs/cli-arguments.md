@@ -38,7 +38,7 @@ Usage of ./nginx-ingress:
 	but the Ingress controller is not able to fetch it from Kubernetes API, the Ingress controller will fail to start.
 	Format: <namespace>/<name>
   -nginx-debug nginx-debug
-    	Enable debugging for NGINX. Uses the nginx-debug binary. Requires 'error-log-level: debug' in the ConfigMap
+        Enable debugging for NGINX. Uses the nginx-debug binary. Requires 'error-log-level: debug' in the ConfigMap.
   -nginx-plus
     	Enable support for NGINX Plus
   -nginx-status
