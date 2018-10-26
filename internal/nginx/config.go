@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
-
 	api_v1 "k8s.io/api/core/v1"
 )
 
@@ -44,7 +43,7 @@ type Config struct {
 	MainWorkerConnections         string
 	MainWorkerRlimitNofile        string
 	Keepalive                     int64
-	MaxFails                      int64
+	MaxFails                      int
 	FailTimeout                   string
 	HealthCheckEnabled            bool
 	HealthCheckMandatory          bool
@@ -189,7 +188,7 @@ func ParseConfigMap(cfgm *api_v1.ConfigMap, nginxPlus bool) *Config {
 		} else {
 			parsingErrors := false
 
-			hstsMaxAge, existsMA, err := GetMapKeyAsInt(cfgm.Data, "hsts-max-age", cfgm)
+			hstsMaxAge, existsMA, err := GetMapKeyAsInt64(cfgm.Data, "hsts-max-age", cfgm)
 			if existsMA && err != nil {
 				glog.Error(err)
 				parsingErrors = true
@@ -313,7 +312,7 @@ func ParseConfigMap(cfgm *api_v1.ConfigMap, nginxPlus bool) *Config {
 			cfg.ServerSnippets = serverSnippets
 		}
 	}
-	if _, exists, err := GetMapKeyAsInt(cfgm.Data, "worker-processes", cfgm); exists {
+	if _, exists, err := GetMapKeyAsInt64(cfgm.Data, "worker-processes", cfgm); exists {
 		if err != nil && cfgm.Data["worker-processes"] != "auto" {
 			glog.Errorf("Configmap %s/%s: Invalid value for worker-processes key: must be an integer or the string 'auto', got %q", cfgm.GetNamespace(), cfgm.GetName(), cfgm.Data["worker-processes"])
 		} else {
@@ -332,7 +331,7 @@ func ParseConfigMap(cfgm *api_v1.ConfigMap, nginxPlus bool) *Config {
 	if workerRlimitNofile, exists := cfgm.Data["worker-rlimit-nofile"]; exists {
 		cfg.MainWorkerRlimitNofile = workerRlimitNofile
 	}
-	if keepalive, exists, err := GetMapKeyAsInt(cfgm.Data, "keepalive", cfgm); exists {
+	if keepalive, exists, err := GetMapKeyAsInt64(cfgm.Data, "keepalive", cfgm); exists {
 		if err != nil {
 			glog.Error(err)
 		} else {

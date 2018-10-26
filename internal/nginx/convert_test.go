@@ -101,7 +101,7 @@ func TestGetMapKeyAsInt(t *testing.T) {
 		"key": "123456789",
 	}
 
-	i, exists, err := GetMapKeyAsInt(configMap.Data, "key", &configMap)
+	i, exists, err := GetMapKeyAsInt64(configMap.Data, "key", &configMap)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestGetMapKeyAsIntNotFound(t *testing.T) {
 	configMap := configMap
 	configMap.Data = map[string]string{}
 
-	_, exists, _ := GetMapKeyAsInt(configMap.Data, "key", &configMap)
+	_, exists, _ := GetMapKeyAsInt64(configMap.Data, "key", &configMap)
 	if exists {
 		t.Errorf("The key 'key' must not exist in the configMap")
 	}
@@ -131,7 +131,7 @@ func TestGetMapKeyAsIntErrorMessage(t *testing.T) {
 	}
 
 	// Test with configmap
-	_, _, err := GetMapKeyAsInt(cfgm.Data, "key", &cfgm)
+	_, _, err := GetMapKeyAsInt64(cfgm.Data, "key", &cfgm)
 	if err == nil {
 		t.Error("An error was expected")
 	}
@@ -145,7 +145,7 @@ func TestGetMapKeyAsIntErrorMessage(t *testing.T) {
 	ingress.Annotations = map[string]string{
 		"key": "other_string",
 	}
-	_, _, err = GetMapKeyAsInt(ingress.Annotations, "key", &ingress)
+	_, _, err = GetMapKeyAsInt64(ingress.Annotations, "key", &ingress)
 	if err == nil {
 		t.Error("An error was expected")
 	}
